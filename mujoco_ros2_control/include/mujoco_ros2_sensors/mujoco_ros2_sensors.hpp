@@ -95,6 +95,7 @@ namespace mujoco_ros2_sensors {
         void register_imu_sensors(const std::vector<ImuSensorStruct> &sensors);
 
         std::string get_frame_id(int sensor_id);
+        std::string get_pose_frame_id(int sensor_id);
     };
 }
 #endif //MUJOCO_ROS2_CONTROL_MUJOCO_ROS2_SENSORS_HPP

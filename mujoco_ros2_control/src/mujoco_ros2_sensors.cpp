@@ -104,7 +104,7 @@ namespace mujoco_ros2_sensors {
                     imu_sensor.gyro = true;
                 }
                 if ((sensor_type == mjSENS_FRAMEPOS || sensor_type == mjSENS_FRAMEQUAT) && pose_sensor.frame_id.empty()) {
-                    pose_sensor.frame_id = get_frame_id(sensor_id);
+                    pose_sensor.frame_id = get_pose_frame_id(sensor_id);
                 } else if ((sensor_type == mjSENS_FORCE || sensor_type == mjSENS_TORQUE) && wrench_sensor.frame_id.empty()) {
                     wrench_sensor.frame_id = get_frame_id(sensor_id);
                 } else if ((sensor_type == mjSENS_ACCELEROMETER || sensor_type == mjSENS_GYRO) && imu_sensor.frame_id.empty()) {
@@ -158,6 +158,19 @@ namespace mujoco_ros2_sensors {
             const auto &frame_type = mujoco_model_->sensor_reftype[sensor_id];
             return mj_id2name(mujoco_model_, frame_type, frame_id);
         }
+    }
+
+    std::string MujocoRos2Sensors::get_pose_frame_id(int sensor_id) {
+        if (mujoco_model_->sensor_refid[sensor_id] == -1) {
+            return "world";
+        }
+        const auto &frame_id = mujoco_model_->sensor_refid[sensor_id];
+        const auto &frame_type = mujoco_model_->sensor_reftype[sensor_id];
+        const char *name = mj_id2name(mujoco_model_, frame_type, frame_id);
+        if (name == nullptr) {
+            return "world";
+        }
+        return name;
     }
 
     void MujocoRos2Sensors::register_pose_sensors(const std::vector<PoseSensorStruct> &sensors) {
